@@ -1,6 +1,6 @@
-const Application = require("../models/Application");
+import Application from "../models/Application.js";
 
-const submitApplication = async (req, res) => {
+export const submitApplication = async (req, res) => {
   try {
     const {
       firstName,
@@ -45,6 +45,24 @@ const submitApplication = async (req, res) => {
     console.error("Error submitting application:", error);
     res.status(500).json({ message: "Server Error" });
   }
+
+  
 };
 
-module.exports = { submitApplication };
+export const getAllApplications = async (req, res) => {
+  try {
+    const apps = await Application.find().sort({ createdAt: -1 });
+    // Add resume URL for each app
+    const host = req.protocol + "://" + req.get("host");
+    const applicationsWithUrl = apps.map((app) => ({
+      ...app._doc,
+      resumeUrl: app.resumePath
+        ? `${host}/${app.resumePath.replace(/\\/g, "/")}`
+        : null,
+      fullName: app.firstName + " " + app.lastName,
+    }));
+    res.json(applicationsWithUrl);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};

@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import connectDB from "./config/db.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -16,14 +17,6 @@ const PORT = process.env.PORT || 5000;
 // Security middlewares
 app.use(helmet());
 app.use(cors());
-app.use(
-  mongoSanitize({
-    replaceWith: "_",
-  })
-);
-
-// Body parser - parse JSON bodies for application/json requests
-app.use(express.json());
 
 // Rate limiter - limit requests to prevent abuse
 const limiter = rateLimit({
@@ -32,16 +25,40 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Static folder to serve uploaded resume files
-app.use("/uploads", express.static(path.resolve("uploads")));
+// Body parser - parse JSON bodies for application/json requests
+app.use(express.json());
 
-// Routes - mount your application routes under /api/applications
-app.use("/api/applications", applicationRoutes);
+// Mongo sanitize (body only, compatible with Express 5+)
+app.use((req, res, next) => {
+  if (req.body) mongoSanitize.sanitize(req.body, { replaceWith: "_" });
+  next();
+});
 
-// Connect to MongoDB
+// Directory helpers
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve uploads (for resumes)
+app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
+
+// API routes
+app.use("/api", applicationRoutes);
+
+// Serve frontend build
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+// For any route not starting with /api or /uploads, serve index.html
+app.get("*", (req, res) => {
+  if (
+    req.originalUrl.startsWith("/api") ||
+    req.originalUrl.startsWith("/uploads")
+  ) {
+    return res.status(404).end();
+  }
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
+
+// Connect to DB and start server
 connectDB();
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

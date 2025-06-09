@@ -1,24 +1,28 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const applicationSchema = new mongoose.Schema(
+const ApplicationSchema = new mongoose.Schema(
   {
-    firstName: String,
-    lastName: String,
-    email: String,
-    phone: String,
-    dob: Date,
-    gender: String,
-    street: String,
-    city: String,
-    state: String,
-    postalCode: String,
-    country: String,
-    education: String,
-    experience: String,
-    statement: String,
-    resumePath: String,
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    dob: { type: String, required: true },
+    gender: { type: String, required: true },
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, required: true },
+    education: { type: String, required: true },
+    experience: { type: String, required: true }, // years as string/number
+    statement: { type: String, required: true },
+    resumePath: { type: String },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Application", applicationSchema);
+const Application = mongoose.model("Application", ApplicationSchema);
+
+export default Application;

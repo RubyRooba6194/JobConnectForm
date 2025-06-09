@@ -15,10 +15,8 @@ const ApplicationForm = () => {
     state: "",
     postalCode: "",
     country: "",
-    highSchool: "",
-    gpa: "",
-    score: "",
-    major: "",
+    education: "",
+    experience: "",
     statement: "",
     resume: null,
   });
@@ -36,9 +34,11 @@ const ApplicationForm = () => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
-    for (let key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        formDataToSend.append(key, value);
+      }
+    });
 
     try {
       await axios.post(
@@ -65,10 +65,8 @@ const ApplicationForm = () => {
         state: "",
         postalCode: "",
         country: "",
-        highSchool: "",
-        gpa: "",
-        score: "",
-        major: "",
+        education: "",
+        experience: "",
         statement: "",
         resume: null,
       });
@@ -112,7 +110,6 @@ const ApplicationForm = () => {
               required
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium">Email</label>
             <input
@@ -136,7 +133,6 @@ const ApplicationForm = () => {
               required
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium">Date of Birth</label>
             <input
@@ -148,7 +144,6 @@ const ApplicationForm = () => {
               required
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium mb-1">Gender</label>
             <div className="flex items-center gap-4">

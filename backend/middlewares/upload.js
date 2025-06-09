@@ -10,7 +10,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Allow pdf, doc, docx as your frontend allows
 const allowed = [".pdf", ".doc", ".docx"];
 
 const fileFilter = (req, file, cb) => {
