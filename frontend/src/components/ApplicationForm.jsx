@@ -42,7 +42,7 @@ const ApplicationForm = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/college-application",
+        "http://localhost:5000/api/job-application",
         formDataToSend,
         {
           headers: {

@@ -7,9 +7,7 @@ import {
 
 const router = express.Router();
 
-// POST /api/college-application
-router.post("/college-application", upload.single("resume"), submitApplication);
-// Add this route
+router.post("/job-application", upload.single("resume"), submitApplication);
 router.get("/applications", getAllApplications);
 
 export default router;
